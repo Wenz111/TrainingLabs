@@ -16,7 +16,15 @@
 
 package ai.certifai.training.image_processing;
 
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Size;
+import org.nd4j.common.io.ClassPathResource;
+
 import java.io.IOException;
+
+import static org.bytedeco.opencv.global.opencv_imgcodecs.IMREAD_GRAYSCALE;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
+import static org.bytedeco.opencv.global.opencv_imgproc.*;
 
 /*
  *
@@ -46,6 +54,33 @@ import java.io.IOException;
 
 public class LoadImages {
     public static void main(String[] args) throws IOException {
+
+        String myImage = new ClassPathResource("image_processing/opencv.png").getFile().getAbsolutePath();
+        Mat source = imread(myImage);
+        Mat source2 = imread(myImage, IMREAD_GRAYSCALE);
+
+        Display.display(source, "Original Image");
+        Display.display(source2, "Greyscale Image");
+
+        System.out.println("No. of Channels:" + source.channels());
+        System.out.println("Image Width:" + source.arrayWidth());
+        System.out.println("Image Height:" + source.arrayHeight());
+        System.out.println("Image Depth:" + source.depth());
+        System.out.println("Image Array Depth:" + source.arrayDepth());
+
+        Mat downsize = new Mat();
+        resize(source, downsize, new Size(500, 500));
+        Display.display(downsize, "DownSampled");
+
+        Mat upsize_nearest = new Mat();
+        Mat upsize_linear = new Mat();
+        Mat upsize_cubic = new Mat();
+        resize(downsize, upsize_nearest, new Size(1478, 1200), 0, 0, INTER_NEAREST);
+        resize(downsize, upsize_linear, new Size(1478, 1200), 0, 0, INTER_LINEAR);
+        resize(downsize, upsize_cubic, new Size(1478, 1200), 0, 0, INTER_CUBIC);
+        Display.display(upsize_nearest, "UpSampled Nearest Neighbour Interpolation");
+        Display.display(upsize_linear, "UpSampled Bi-linear Interpolation");
+        Display.display(upsize_cubic, "UpSampled Bi-cubic Interpolation");
 
         /*
         *

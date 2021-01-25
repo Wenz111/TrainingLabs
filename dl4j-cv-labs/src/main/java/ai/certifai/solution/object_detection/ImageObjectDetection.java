@@ -26,6 +26,7 @@ import org.deeplearning4j.nn.layers.objdetect.YoloUtils;
 import org.deeplearning4j.zoo.ZooModel;
 import org.deeplearning4j.zoo.model.YOLO2;
 import org.deeplearning4j.zoo.util.darknet.COCOLabels;
+import org.nd4j.common.io.ClassPathResource;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
 import org.nd4j.linalg.factory.Nd4j;
@@ -53,7 +54,7 @@ public class ImageObjectDetection {
     public static void main(String[] args) throws Exception {
 
         // Change the testImagePATH to your own test image
-        String testImagePATH = "";
+        String testImagePATH = new ClassPathResource("image_processing/lena.png").getFile().getAbsolutePath();
         File file = new File(testImagePATH);
         System.out.println(String.format("You are using this image file located at %s", testImagePATH));
         COCOLabels labels = new COCOLabels();

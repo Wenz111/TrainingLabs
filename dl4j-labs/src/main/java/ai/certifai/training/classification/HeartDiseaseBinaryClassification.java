@@ -45,6 +45,7 @@ import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.NormalizerStandardize;
 import org.nd4j.common.io.ClassPathResource;
+import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
@@ -129,16 +130,37 @@ public class HeartDiseaseBinaryClassification {
 //        The first line has been written for you.
 
 // ########################### Configure your model here ######################
-//        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder() // uncomment here
-//                .seed(1234) // uncomment here
-
-
-
-//                .build(); // uncomment here
+        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder() // uncomment here
+                .seed(1234) // uncomment here
+                .updater(new Adam(1e-3))
+                .weightInit(WeightInit.XAVIER)
+                .list()
+                .layer(new DenseLayer.Builder()
+                        .nIn(13)
+                        .nOut(32)
+                        .activation(Activation.RELU)
+                        .build())
+                .layer(new DenseLayer.Builder()
+                        .nIn(32)
+                        .nOut(64)
+                        .activation(Activation.RELU)
+                        .build())
+                .layer(new DenseLayer.Builder()
+                        .nIn(64)
+                        .nOut(128)
+                        .activation(Activation.RELU)
+                        .build())
+                .layer(new OutputLayer.Builder()
+                        .nIn(128)
+                        .nOut(2)
+                        .activation(Activation.SIGMOID)
+                        .lossFunction(LossFunctions.LossFunction.XENT)
+                        .build())
+                .build(); // uncomment here
 // ########################### END ############################################
 
-//        MultiLayerNetwork model = new MultiLayerNetwork(conf); // uncomment here
-//        model.init(); // uncomment here
+        MultiLayerNetwork model = new MultiLayerNetwork(conf); // uncomment here
+        model.init(); // uncomment here
 
         //=====================================================================
         //            Step 3: Set Listener
@@ -149,29 +171,29 @@ public class HeartDiseaseBinaryClassification {
         server.attach(storage);
 
         // Set model listeners
-//        model.setListeners(new StatsListener(storage, 10)); // uncomment here
+        model.setListeners(new StatsListener(storage, 10)); // uncomment here
 
         //=====================================================================
         //            Step 4: Train model
         //=====================================================================
 
 //        ####################### Uncomment this section #########################
-//        Evaluation eval;
-//        for(int i = 0; i < EPOCH; ++i) {
-//            model.fit(trainData);
-//            eval = model.evaluate(testData);
-//            System.out.println("EPOCH: " + i + " Accuracy: " + eval.accuracy());
-//            testData.reset();
-//            trainData.reset();
-//        }
-//
-//        System.out.println("=== Train data evaluation ===");
-//        eval = model.evaluate(trainData);
-//        System.out.println(eval.stats());
-//
-//        System.out.println("=== Test data evaluation ===");
-//        eval = model.evaluate(testData);
-//        System.out.println(eval.stats());
+        Evaluation eval;
+        for(int i = 0; i < EPOCH; ++i) {
+            model.fit(trainData);
+            eval = model.evaluate(testData);
+            System.out.println("EPOCH: " + i + " Accuracy: " + eval.accuracy());
+            testData.reset();
+            trainData.reset();
+        }
+
+        System.out.println("=== Train data evaluation ===");
+        eval = model.evaluate(trainData);
+        System.out.println(eval.stats());
+
+        System.out.println("=== Test data evaluation ===");
+        eval = model.evaluate(testData);
+        System.out.println(eval.stats());
 
     }
 
