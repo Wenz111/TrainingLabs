@@ -54,16 +54,14 @@ public class ChiliGradingDetector_YOLOv2 {
     private static final Logger log = LoggerFactory.getLogger(ChiliGradingDetector_YOLOv2.class);
 
     private static final int seed = 123;
-    private static final double detectionThreshold = 0.15;
+    private static final double detectionThreshold = 0.5;
     private static final int nBoxes = 5;
     private static final double lambdaNoObj = 0.5;
     private static final double lambdaCoord = 5.0;
-//    private static final double[][] priorBoxes = {{1, 3}, {2.5, 6}, {3, 4}, {3.5, 8}, {4, 9}};
-    private static final double[][] priorBoxes = {};
+    private static final double[][] priorBoxes = {{1, 3}, {2.5, 6}, {3, 4}, {3.5, 8}, {4, 9}};
 
     private static final int batchSize = 2;
-//    private static final int nEpochs = 1;
-    private static final int nEpochs = 5;
+    private static final int nEpochs = 40;
     private static final double learningRate = 1e-4;
     private static final int nClasses = 6;
     private static List<String> labels;
@@ -73,7 +71,7 @@ public class ChiliGradingDetector_YOLOv2 {
     private static Frame frame = null;
     private static final Scalar RED = RGB(255.0, 0, 0);
     private static final Scalar GREEN = RGB(0, 255.0, 0);
-    private static final Scalar BLUE = RGB(0, 0, 255.0);
+    private static final Scalar BLUE = RGB(173.0, 202.0, 230.0);
     private static final Scalar YELLOW = RGB(255.0, 255.0, 0);
     private static final Scalar MAGENTA = RGB(255.0, 0, 255.0);
     private static final Scalar CYAN = RGB(0, 255.0, 255.0);
@@ -91,6 +89,7 @@ public class ChiliGradingDetector_YOLOv2 {
         // Check if model exists
         if (modelFilename.exists()) {
             // Load trained model
+            log.info("model found at: " + modelFilename.toString());
             Nd4j.getRandom().setSeed(seed);
             model = ModelSerializer.restoreComputationGraph(modelFilename);
         } else {
@@ -131,7 +130,7 @@ public class ChiliGradingDetector_YOLOv2 {
         OfflineValidationWithTestDataset(testIter);
 
         // Inference the model and process the webcam stream and make predictions.
-        // doInference();
+//         doInference();
     }
 
     private static ComputationGraph getComputationGraph(ComputationGraph pretrained, INDArray priors, FineTuneConfiguration fineTuneConfiguration) {
